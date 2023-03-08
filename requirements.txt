@@ -22,6 +22,7 @@ chardet==4.0.0
 charset-normalizer==3.1.0
 colorlog==6.7.0
 colorzero==1.1
+
 comm==0.1.2
 cycler==0.10.0
 Cython==0.29.33
