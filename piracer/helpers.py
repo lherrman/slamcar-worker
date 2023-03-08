@@ -4,11 +4,12 @@ import time
 from dataclasses import dataclass
 
 from pathlib import Path
+from piracer import config as cfg
 
 from donkeycar import Vehicle
 from donkeycar.parts import pins
 
-import config as cfg
+from piracer.data_persistence import scfg
 
 logger = logging.getLogger(__name__)
 
@@ -67,7 +68,7 @@ def add_steering_trottle_calibration(v: Vehicle):
     from donkeycar.parts.actuator import (
         PulseController,
     )
-    from parts.actuator import (
+    from piracer.parts.actuator import (
         PWMSteeringCalibrator,
         PWMThrottleCalibrator,
     )
@@ -97,7 +98,7 @@ def add_steering_trottle_calibration(v: Vehicle):
 
 
 def add_api_controller(v: Vehicle):
-    from parts.api_getter import WebAPIValueGetter
+    from piracer.parts.api_getter import WebAPIValueGetter
 
     ctr = WebAPIValueGetter()
     v.add(
@@ -114,7 +115,7 @@ def add_api_controller(v: Vehicle):
 
 
 def add_controller(v: Vehicle):
-    from parts.receiver import RCReceiver
+    from piracer.parts.receiver import RCReceiver
 
     ctr = RCReceiver(cfg)
     v.add(
@@ -135,7 +136,7 @@ def add_controller(v: Vehicle):
 
 
 def add_camera(v: Vehicle):
-    from parts.camera import VidgearCam
+    from piracer.parts.camera import VidgearCam
 
     cam = VidgearCam(
         image_w=cfg.IMAGE_W,
@@ -148,7 +149,7 @@ def add_camera(v: Vehicle):
 
 
 def add_recorder(v: Vehicle):
-    from parts.recorder import DonkeyRecorder
+    from piracer.parts.recorder import DonkeyRecorder
 
     # DATA_NAMES.recording needs to be the first entry!
     recorder = DonkeyRecorder(
@@ -177,7 +178,7 @@ def add_recorder(v: Vehicle):
 
 
 def add_model_driver(v: Vehicle):
-    from parts.self_drive.model_driver import DonkeyModelDriver
+    from piracer.parts.self_drive.model_driver import DonkeyModelDriver
 
     # DATA_NAMES.recording needs to be the first entry!
     model_driver = DonkeyModelDriver(
@@ -201,14 +202,14 @@ def add_model_driver(v: Vehicle):
 
 
 def get_status_info():
-    mode = cfg.mode
-    selected_ai_model = cfg.selected_ai_model
+    mode = scfg.mode
+    selected_ai_model = scfg.selected_ai_model
     return {
         'self_driving': not mode == 'user',
         'training_mode': mode == 'user',
         'calibrating': mode == 'calibrating',
         'model': selected_ai_model,
-        'is_recording': False,
+        'is_recording': scfg.is_recording,
         'current_selected_model': selected_ai_model,
     }
 

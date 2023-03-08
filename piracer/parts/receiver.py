@@ -1,14 +1,9 @@
-
+from donkeycar.parts.controller import Channel
 
 import logging
 
 logger = logging.getLogger(__name__)
 
-class Channel:
-    def __init__(self, pin):
-        self.pin = pin
-        self.tick = None
-        self.high_tick = None
 
 class RCReceiver:
     MIN_OUT = -1
