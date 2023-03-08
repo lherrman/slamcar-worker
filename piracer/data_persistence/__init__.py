@@ -170,7 +170,7 @@ class HSVConfig:
     """
 
     def __init__(self):
-        self.data_location = '/data/hsv_settings.sqlite3'
+        self.data_location = '/home/main/slamcar-worker/data/hsv_settings.sqlite3'
         self.store = shelve_db
         # this is just to initialize the file upon startup
         self.store.set('initialized', True, location=self.data_location)

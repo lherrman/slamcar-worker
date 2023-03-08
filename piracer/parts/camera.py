@@ -3,6 +3,7 @@ from vidgear.gears import VideoGear
 import imutils
 from pathlib import Path
 from piracer.data_persistence import hsv_cfg
+import piracer.config as cfg
 
 
 def reducer(frame=None, percentage=0, interpolation=cv2.INTER_LANCZOS4):
@@ -49,7 +50,7 @@ class VidgearCam:
         image_h=120,
         iCam=0,
         rate_hz=10,
-        image_stream_location=Path | None,
+        image_stream_location:Path = Path(cfg.IMAGE_STREAM_LOCATION),
     ):
         options= {
             'CAP_PROP_FRAME_WIDTH': 640,

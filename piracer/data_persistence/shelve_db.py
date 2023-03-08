@@ -2,7 +2,7 @@ from sqlitedict import SqliteDict
 
 
 def _get_db_location():
-    db_location = '/data/settings_store.sqlite3'
+    db_location = '/home/main/slamcar-worker/data/settings_store.sqlite3'
     return db_location
 
 

@@ -40,19 +40,13 @@ STEERING_OFFSET = int(get_value('STEERING_OFFSET', 10))
 THROTTLE_FACTOR = float(get_value('THROTTLE_FACTOR', 1.0))
 
 # for Software
-UPLOADS_BASE_PATH = Path(get_value('UPLOADS_BASE_PATH', '/home/pi/uploads'))
+UPLOADS_BASE_PATH = Path(get_value('UPLOADS_BASE_PATH', '/home/main/uploads'))
 SELF_DRIVING_MODEL_PATH = get_value('SELF_DRIVING_MODEL_PATH', None)
 MODEL_FOLDER_PATH = UPLOADS_BASE_PATH / 'models'
 IMAGE_STREAM_LOCATION = get_value(
-    'IMAGE_STREAM_LOCATION', '/tmp/image-stream/'
+    'IMAGE_STREAM_LOCATION', '/home/main/uploads/stream'
 )
 
-# IMAGE_W = 320
-# IMAGE_H = 240
-
-#  this gives distorted images!
-# IMAGE_W = 240
-# IMAGE_H = 180
 
 IMAGE_W = 160
 IMAGE_H = 120

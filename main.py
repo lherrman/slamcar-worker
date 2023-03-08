@@ -88,6 +88,7 @@ if __name__ == '__main__':
                     rate_hz=cfg.RATE_HZ,
                 )   # , verbose=True)
                 loop_count += 1
+                print(f'loop_count: {loop_count}')
         except KeyboardInterrupt:
             pass
         except Exception as e:
