@@ -24,7 +24,6 @@ class CameraStream():
         print("Video Connected.")
         self.camera.start()
 
-
     def __del__(self):
         self.stop()
 
