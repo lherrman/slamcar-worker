@@ -1,6 +1,6 @@
 
 import logging
-
+import pigpio
 
 logger = logging.getLogger(__name__)
 
@@ -15,8 +15,7 @@ class RCReceiver:
     MAX_OUT = 1
 
     def __init__(self, cfg, debug=False):
-        import pigpio
-
+        
         if cfg.PI_GPIO_HOST and cfg.PI_GPIO_PORT:
             self.pi = pigpio.pi(cfg.PI_GPIO_HOST, cfg.PI_GPIO_PORT)
         else:

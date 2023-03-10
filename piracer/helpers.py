@@ -9,8 +9,6 @@ from piracer import config as cfg
 from donkeycar import Vehicle
 from donkeycar.parts import pins
 
-from piracer.data_persistence import scfg
-
 logger = logging.getLogger(__name__)
 
 
@@ -35,89 +33,39 @@ def add_steering_trottle(v: Vehicle):
         PulseController,
     )
 
-    dt = cfg.get_pwm_steeering_throttle()
     steering_controller = PulseController(
-        pwm_pin=pins.pwm_pin_by_id(dt['PWM_STEERING_PIN']),
-        pwm_scale=dt['PWM_STEERING_SCALE'],
-        pwm_inverted=dt['PWM_STEERING_INVERTED'],
+        pwm_pin=pins.pwm_pin_by_id(cfg.PWM_STEERING_PIN),
+        pwm_scale=cfg.PWM_STEERING_SCALE,
+        pwm_inverted=cfg.PWM_STEERING_INVERTED,
     )
     steering = PWMSteering(
         controller=steering_controller,
-        left_pulse=dt['STEERING_LEFT_PWM'],
-        right_pulse=dt['STEERING_RIGHT_PWM'],
+        left_pulse=cfg.STEERING_LEFT_PWM,
+        right_pulse=cfg.STEERING_RIGHT_PWM,
     )
 
     throttle_controller = PulseController(
-        pwm_pin=pins.pwm_pin_by_id(dt['PWM_THROTTLE_PIN']),
-        pwm_scale=dt['PWM_THROTTLE_SCALE'],
-        pwm_inverted=dt['PWM_THROTTLE_INVERTED'],
+        pwm_pin=pins.pwm_pin_by_id(cfg.PWM_THROTTLE_PIN),
+        pwm_scale=cfg.PWM_THROTTLE_SCALE,
+        pwm_inverted=cfg.PWM_THROTTLE_INVERTED,
     )
+    
     throttle = PWMThrottle(
         controller=throttle_controller,
-        max_pulse=dt['THROTTLE_FORWARD_PWM'],
-        zero_pulse=dt['THROTTLE_STOPPED_PWM'],
-        min_pulse=dt['THROTTLE_REVERSE_PWM'],
+        max_pulse=cfg.THROTTLE_FORWARD_PWM,
+        zero_pulse=cfg.THROTTLE_STOPPED_PWM,
+        min_pulse=cfg.THROTTLE_REVERSE_PWM,
     )
 
     v.add(steering, inputs=[DATA_NAMES.rc_steering], threaded=True)
     v.add(throttle, inputs=[DATA_NAMES.rc_throttle], threaded=True)
-    return steering, throttle
 
 
-def add_steering_trottle_calibration(v: Vehicle):
-    from donkeycar.parts.actuator import (
-        PulseController,
-    )
-    from piracer.parts.actuator import (
-        PWMSteeringCalibrator,
-        PWMThrottleCalibrator,
-    )
-
-    dt = cfg.get_pwm_steeering_throttle()
-    steering_controller = PulseController(
-        pwm_pin=pins.pwm_pin_by_id(dt['PWM_STEERING_PIN']),
-        pwm_scale=dt['PWM_STEERING_SCALE'],
-        pwm_inverted=dt['PWM_STEERING_INVERTED'],
-    )
-    steering = PWMSteeringCalibrator(
-        controller=steering_controller,
-    )
-
-    # throttle_controller = PulseController(
-    #     pwm_pin=pins.pwm_pin_by_id(dt['PWM_THROTTLE_PIN']),
-    #     pwm_scale=dt['PWM_THROTTLE_SCALE'],
-    #     pwm_inverted=dt['PWM_THROTTLE_INVERTED'],
-    # )
-    # throttle = PWMThrottleCalibrator(
-    #     controller=throttle_controller,
-    # )
-
-    v.add(steering, inputs=[], threaded=True)
-    # v.add(throttle, inputs=[], threaded=True)
-    return steering, None
 
 
-def add_api_controller(v: Vehicle):
-    from piracer.parts.api_getter import WebAPIValueGetter
-
-    ctr = WebAPIValueGetter()
-    v.add(
-        ctr,
-        inputs=[],
-        outputs=[
-            DATA_NAMES.user_mode,
-            DATA_NAMES.recording,
-            DATA_NAMES.selected_ai_model,
-        ],
-        threaded=True,
-    )
-    return ctr
-
-
-def add_controller(v: Vehicle):
+def add_controller(v: Vehicle, logging: bool = False):
     from piracer.parts.receiver import RCReceiver
-
-    ctr = RCReceiver(cfg)
+    ctr = RCReceiver(cfg, logging)
     v.add(
         ctr,
         inputs=[
@@ -132,86 +80,7 @@ def add_controller(v: Vehicle):
         ],
         threaded=False,
     )
-    return ctr
 
-
-def add_camera(v: Vehicle):
-    from piracer.parts.camera import VidgearCam
-
-    cam = VidgearCam(
-        image_w=cfg.IMAGE_W,
-        image_h=cfg.IMAGE_H,
-        rate_hz=cfg.RATE_HZ,
-        image_stream_location=Path(cfg.IMAGE_STREAM_LOCATION),
-    )
-    v.add(cam, outputs=[DATA_NAMES.camera_image], threaded=True)
-    return cam
-
-
-def add_recorder(v: Vehicle):
-    from piracer.parts.recorder import DonkeyRecorder
-
-    # DATA_NAMES.recording needs to be the first entry!
-    recorder = DonkeyRecorder(
-        base_path=cfg.UPLOADS_BASE_PATH,
-        inputs=[
-            DATA_NAMES.recording,
-            DATA_NAMES.camera_image,
-            DATA_NAMES.rc_steering,
-            DATA_NAMES.rc_throttle,
-        ],
-        types=['bool', 'image_array', 'float', 'float'],
-    )
-
-    v.add(
-        recorder,
-        inputs=[
-            DATA_NAMES.recording,
-            DATA_NAMES.camera_image,
-            DATA_NAMES.rc_steering,
-            DATA_NAMES.rc_throttle,
-        ],
-        # no return value
-        outputs=[],
-    )
-    return recorder
-
-
-def add_model_driver(v: Vehicle):
-    from piracer.parts.self_drive.model_driver import DonkeyModelDriver
-
-    # DATA_NAMES.recording needs to be the first entry!
-    model_driver = DonkeyModelDriver(
-        inputs=[
-            DATA_NAMES.camera_image,
-        ],
-    )
-
-    v.add(
-        model_driver,
-        inputs=[
-            DATA_NAMES.camera_image,
-        ],
-        outputs=[
-            DATA_NAMES.rc_throttle,
-            DATA_NAMES.rc_steering,
-        ],
-        threaded=False,
-    )
-    return model_driver
-
-
-def get_status_info():
-    mode = scfg.mode
-    selected_ai_model = scfg.selected_ai_model
-    return {
-        'self_driving': not mode == 'user',
-        'training_mode': mode == 'user',
-        'calibrating': mode == 'calibrating',
-        'model': selected_ai_model,
-        'is_recording': scfg.is_recording,
-        'current_selected_model': selected_ai_model,
-    }
 
 
 class VehicleSingleUpdate(Vehicle):
