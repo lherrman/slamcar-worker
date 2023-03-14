@@ -94,7 +94,8 @@ class VehicleSingleUpdate(Vehicle):
         # print a nice startup banner
         from pyfiglet import Figlet
         f = Figlet(font='big')
-        print(f.renderText('SlamCar v0.1'))
+        print(f.renderText('SlamCar'))
+        print("SlamCar Worker")
 
         for entry in self.parts:
             if entry.get('thread'):
