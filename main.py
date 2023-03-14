@@ -9,28 +9,41 @@ from piracer.helpers import (
     VehicleSingleUpdate,
 )
 from piracer.parts.camera_stream import CameraStream
+from piracer.parts.actuator import PWMThrottle
 
 logger = logging.getLogger(__name__)
 
 logging.basicConfig(level=logging.INFO)
 
- 
+
+def add_pwm_throttle(v: VehicleSingleUpdate):
+    throttle = PWMThrottle(
+        controller=None,
+        max_pulse=cfg.THROTTLE_FORWARD_PWM,
+        zero_pulse=cfg.THROTTLE_STOPPED_PWM,
+        min_pulse=cfg.THROTTLE_REVERSE_PWM,
+    )
+    v.add(throttle, outputs=['throttle'], threaded=True)
+
 def create_vehicle() -> VehicleSingleUpdate:
     vehicle = VehicleSingleUpdate()
-    add_controller(vehicle, logging=False)
+    #add_controller(vehicle, logging=False)
+    add_pwm_throttle(vehicle)
     add_steering_trottle(vehicle)
     return vehicle
 
-if __name__ == '__main__':
 
+def main():
+    
     if cfg.HAVE_CONSOLE_LOGGING:
         logger.setLevel(logging.getLevelName(cfg.LOGGING_LEVEL))
         ch = logging.StreamHandler()
         ch.setFormatter(logging.Formatter(cfg.LOGGING_FORMAT))
         logger.addHandler(ch)
 
-    stream = CameraStream("10.0.0.21", 5001, frame_delta_time=0.05)
-    stream.start()
+    if cfg.CAMERA_ENABLE:
+        stream = CameraStream("10.0.0.21", 5001, frame_delta_time=0.05)
+        stream.start()
 
     while True:
         vehicle = create_vehicle()
@@ -53,4 +66,9 @@ if __name__ == '__main__':
         finally:
             logging.info('stopping vehicle')
             vehicle.stop()
-            stream.stop()
+            if cfg.CAMERA_ENABLE:
+                stream.stop()
+
+if __name__ == '__main__':
+    main()
+    

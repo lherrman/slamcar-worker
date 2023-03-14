@@ -102,7 +102,7 @@ class RCReceiver:
             i += 1
         if self.debug:
             logger.info(
-                f'RC CH1 signal:{round(self.signals[0], 3)}, RC CH2 signal:{round(self.signals[1], 3)}, RC CH3 signal:{round(self.signals[2], 3)}'
+                f'RC CH1 signal:{round(self.signals[0], 3):<3}, RC CH2 signal:{round(self.signals[1], 3):<3}, RC CH3 signal:{round(self.signals[2], 3):<3}'
             )
 
         # check mode channel if present

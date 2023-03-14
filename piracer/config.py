@@ -43,30 +43,23 @@ PWM_THROTTLE_SCALE = 1.0   # used to compensate for PWM frequence differences fr
 PWM_THROTTLE_INVERTED = False   # True if hardware requires an inverted PWM pulse
 STEERING_LEFT_PWM = 550     # pwm value for full left steering
 STEERING_RIGHT_PWM = 200    # pwm value for full right steering
-# THROTTLE_FORWARD_PWM = 400  # pwm value for max forward throttle
-# THROTTLE_STOPPED_PWM = 370  # pwm value for no movement
-# THROTTLE_REVERSE_PWM  = 340 # pwm value for max reverse throttle
 THROTTLE_FORWARD_PWM = 430  # pwm value for max forward throttle
 THROTTLE_STOPPED_PWM = 400  # pwm value for no movement
 THROTTLE_REVERSE_PWM  = 370 # pwm value for max reverse throttle
 
 
-# for Software
-UPLOADS_BASE_PATH = Path('/home/main/uploads')
-SELF_DRIVING_MODEL_PATH = None
-MODEL_FOLDER_PATH = UPLOADS_BASE_PATH / 'models'
-IMAGE_STREAM_LOCATION = '/home/main/slamcar-worker/data/stream'
+
+# for Camera Stream
+CAMERA_ENABLE = False
+CAMERA_RESOLUTION = (1640, 1232)
+CAMERA_FRAMERATE = 20
+SOCKER_PORT = 5001
+SOCKER_HOST = '10.0.0.21'
 
 
-IMAGE_W = 1640
-IMAGE_H = 1232
-
+# for AI UNUSED
 RATE_HZ = 20
 FPS_DEBUG_INTERVAL = 10
-
-
-WEB_CONTROL_PORT = 8000             # which port to listen on when making a web controller
-WEB_INIT_MODE = 'user'              # which control mode to start in. one of user|local_angle|local. Setting local will start in ai mode.
 
 # unused settings, because we hard coded this!
 CONTROLLER_TYPE = 'pigpio_rc'

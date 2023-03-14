@@ -38,6 +38,7 @@ def add_steering_trottle(v: Vehicle):
         pwm_scale=cfg.PWM_STEERING_SCALE,
         pwm_inverted=cfg.PWM_STEERING_INVERTED,
     )
+
     steering = PWMSteering(
         controller=steering_controller,
         left_pulse=cfg.STEERING_LEFT_PWM,
@@ -62,7 +63,6 @@ def add_steering_trottle(v: Vehicle):
 
 
 
-
 def add_controller(v: Vehicle, logging: bool = False):
     from piracer.parts.receiver import RCReceiver
     ctr = RCReceiver(cfg, logging)
@@ -82,7 +82,6 @@ def add_controller(v: Vehicle, logging: bool = False):
     )
 
 
-
 class VehicleSingleUpdate(Vehicle):
     """
     This allows us to run our own loop in the main function,
@@ -91,6 +90,11 @@ class VehicleSingleUpdate(Vehicle):
 
     def _warmup(self, rate_hz=10):
         self.on = True
+
+        # print a nice startup banner
+        from pyfiglet import Figlet
+        f = Figlet(font='big')
+        print(f.renderText('SlamCar v0.1'))
 
         for entry in self.parts:
             if entry.get('thread'):

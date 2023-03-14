@@ -10,9 +10,8 @@ logging.basicConfig(level=os.environ.get('LOGLEVEL', 'INFO').upper())
 
 f = Figlet(font='big')
 
-
-print(f.renderText('SlamCar'))
-print(f'using donkey v{__version__} ...')
+# print(f.renderText('SlamCar'))
+# print(f'using donkey v{__version__} ...')
 
 if sys.version_info.major < 3 or sys.version_info.minor < 6:
     msg = f'Donkey Requires Python 3.6 or greater. You are using {sys.version}'
@@ -27,3 +26,4 @@ from . import utils
 from . import config
 from . import contrib
 from .config import load_config
+
