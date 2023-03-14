@@ -27,8 +27,8 @@ def add_pwm_throttle(v: VehicleSingleUpdate):
 
 def create_vehicle() -> VehicleSingleUpdate:
     vehicle = VehicleSingleUpdate()
-    #add_controller(vehicle, logging=False)
-    add_pwm_throttle(vehicle)
+    add_controller(vehicle, logging=False)
+    #add_pwm_throttle(vehicle)
     add_steering_trottle(vehicle)
     return vehicle
 
@@ -42,7 +42,7 @@ def main():
         logger.addHandler(ch)
 
     if cfg.CAMERA_ENABLE:
-        stream = CameraStream("10.0.0.21", 5001, frame_delta_time=0.05)
+        stream = CameraStream(cfg.CAMERA_HOST, cfg.CAMERA_PORT, frame_delta_time=0.05)
         stream.start()
 
     while True:
