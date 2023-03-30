@@ -81,6 +81,21 @@ def add_controller(v: Vehicle, logging: bool = False):
         threaded=False,
     )
 
+def add_server_controller(v: Vehicle, logging: bool = False):
+    from piracer.parts.receiver import ServerReceiver
+    ctr = ServerReceiver(cfg, logging)
+    v.add(
+        ctr,
+        inputs=[
+            DATA_NAMES.user_mode,
+        ],
+        outputs=[
+            DATA_NAMES.rc_steering,
+            DATA_NAMES.rc_throttle,
+            DATA_NAMES.user_mode,
+        ],
+        threaded=False,
+    )
 
 class VehicleSingleUpdate(Vehicle):
     """
@@ -117,16 +132,16 @@ class VehicleSingleUpdate(Vehicle):
 
         self.update_parts()
 
-        sleep_time = 1.0 / rate_hz - (time.time() - start_time)
-        if sleep_time > 0.0:
-            time.sleep(sleep_time)
-        else:
-            # print a message when could not maintain loop rate.
-            if verbose:
-                logger.info(
-                    'WARN::Vehicle: jitter violation in vehicle loop '
-                    'with {0:4.0f}ms'.format(abs(1000 * sleep_time))
-                )
+        # sleep_time = 1.0 / rate_hz - (time.time() - start_time)
+        # if sleep_time > 0.0:
+        #     time.sleep(sleep_time)
+        # else:
+        #     # print a message when could not maintain loop rate.
+        #     if verbose:
+        #         logger.info(
+        #             'WARN::Vehicle: jitter violation in vehicle loop '
+        #             'with {0:4.0f}ms'.format(abs(1000 * sleep_time))
+        #         )
 
         if verbose and loop_count % 200 == 0:
             self.profiler.report()

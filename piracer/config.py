@@ -42,11 +42,10 @@ PWM_THROTTLE_PIN = 'PCA9685.1:40.1'   # PWM output pin for ESC
 PWM_THROTTLE_SCALE = 1.0   # used to compensate for PWM frequence differences from 60hz; NOT for increasing/limiting speed
 PWM_THROTTLE_INVERTED = False   # True if hardware requires an inverted PWM pulse
 STEERING_LEFT_PWM = 550     # pwm value for full left steering
-STEERING_RIGHT_PWM = 200    # pwm value for full right steering
-THROTTLE_FORWARD_PWM = 430  # pwm value for max forward throttle
+STEERING_RIGHT_PWM = 230    # pwm value for full right steering
+THROTTLE_FORWARD_PWM = 420  # pwm value for max forward throttle
 THROTTLE_STOPPED_PWM = 400  # pwm value for no movement
 THROTTLE_REVERSE_PWM  = 370 # pwm value for max reverse throttle
-
 
 
 # for Camera Stream
@@ -58,7 +57,7 @@ CAMERA_HOST = '10.0.0.21'
 
 
 # for AI UNUSED
-RATE_HZ = 20
+RATE_HZ = 60
 FPS_DEBUG_INTERVAL = 10
 
 # unused settings, because we hard coded this!
