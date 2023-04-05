@@ -123,7 +123,7 @@ class VehicleSingleUpdate(Vehicle):
         # wait until the parts warm up.
         logger.info('Starting vehicle at {} Hz'.format(rate_hz))
 
-    def single_update(self, loop_count, rate_hz=10, verbose=False):
+    def single_update(self, loop_count, rate_hz=20, verbose=False):
         """
         rate_hz : int
             The max frequency that the drive loop should run. The actual
@@ -135,16 +135,16 @@ class VehicleSingleUpdate(Vehicle):
 
         self.update_parts()
 
-        # sleep_time = 1.0 / rate_hz - (time.time() - start_time)
-        # if sleep_time > 0.0:
-        #     time.sleep(sleep_time)
-        # else:
-        #     # print a message when could not maintain loop rate.
-        #     if verbose:
-        #         logger.info(
-        #             'WARN::Vehicle: jitter violation in vehicle loop '
-        #             'with {0:4.0f}ms'.format(abs(1000 * sleep_time))
-        #         )
+        sleep_time = 1.0 / rate_hz - (time.time() - start_time)
+        if sleep_time > 0.0:
+            time.sleep(sleep_time)
+        else:
+            # print a message when could not maintain loop rate.
+            if verbose:
+                logger.info(
+                    'WARN::Vehicle: jitter violation in vehicle loop '
+                    'with {0:4.0f}ms'.format(abs(1000 * sleep_time))
+                )
 
         if verbose and loop_count % 200 == 0:
             self.profiler.report()
