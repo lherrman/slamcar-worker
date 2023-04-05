@@ -1,6 +1,7 @@
 import time
 import zmq
 import threading
+from piracer.config import Config as cfg
 
 class ControllStream():
     def __init__(self, host, port, frequency=10):
@@ -46,10 +47,13 @@ class ControllStream():
 
                 self.socket.send_json(state)
                 response = self.socket.recv_json()
-                print(response)
-
+                
                 with self.commands_lock:
-                    self.commands = response
+                    self.commands = response["controlls"]
+
+                if response["config"]:
+                    for key, value in response["config"].items():
+                        cfg.set(key, value)
 
                 return True
             except:

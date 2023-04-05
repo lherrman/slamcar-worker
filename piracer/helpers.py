@@ -9,6 +9,9 @@ from piracer import config as cfg
 from donkeycar import Vehicle
 from donkeycar.parts import pins
 
+from piracer.config import Config as dcfg
+
+
 logger = logging.getLogger(__name__)
 
 
@@ -41,21 +44,21 @@ def add_steering_trottle(v: Vehicle):
 
     steering = PWMSteering(
         controller=steering_controller,
-        left_pulse=cfg.STEERING_LEFT_PWM,
-        right_pulse=cfg.STEERING_RIGHT_PWM,
+        left_pulse=dcfg.get("steering_left_pwm"),
+        right_pulse=dcfg.get("steering_right_pwm"),
     )
 
     throttle_controller = PulseController(
         pwm_pin=pins.pwm_pin_by_id(cfg.PWM_THROTTLE_PIN),
-        pwm_scale=cfg.PWM_THROTTLE_SCALE,
+        pwm_scale=dcfg.get("pwm_throttle_scale"),
         pwm_inverted=cfg.PWM_THROTTLE_INVERTED,
     )
     
     throttle = PWMThrottle(
         controller=throttle_controller,
-        max_pulse=cfg.THROTTLE_FORWARD_PWM,
-        zero_pulse=cfg.THROTTLE_STOPPED_PWM,
-        min_pulse=cfg.THROTTLE_REVERSE_PWM,
+        max_pulse=dcfg.get("throttle_forward_pwm"),
+        zero_pulse=dcfg.get("throttle_stopped_pwm"),
+        min_pulse=dcfg.get("throttle_backward_pwm"),
     )
 
     v.add(steering, inputs=[DATA_NAMES.rc_steering], threaded=True)
