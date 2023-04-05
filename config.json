@@ -1,13 +1,13 @@
 {
-  "car_parameters": { 
-    "throttle_forward_pwm": 420,
+  "car_parameters": {
+    "throttle_forward_pwm": 415,
     "throttle_stopped_pwm": 400,
     "throttle_backward_pwm": 370,
-    "pwm_throttle_scale":1.0,
+    "pwm_throttle_scale": 1.0,
     "steering_left_pwm": 550,
     "steering_right_pwm": 230,
-    "steering_offset_pwm":10,
-    "pwm_steering_scale":1.0,
-    "console_logging":true
+    "steering_offset_pwm": 10,
+    "pwm_steering_scale": 1.0,
+    "console_logging": true
   }
 }

@@ -51,6 +51,8 @@ class ServerReceiver:
         self.controll_stream.start()
 
         self.signals = [0, 0, 0]
+
+        self.request_reboot = False
         
 
     def cbf(self, gpio, level, tick):
@@ -86,7 +88,7 @@ class ServerReceiver:
         :param mode: default user/mode
         :param recording: default recording mode
         """
-        
+        self.request_reboot = self.controll_stream.request_reboot
         controll = self.controll_stream.get_commands()
         if controll:
             self.signals[0] = controll['steering']

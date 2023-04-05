@@ -9,31 +9,35 @@ from piracer.helpers import (
     add_steering_trottle,
     VehicleSingleUpdate,
 )
+from piracer.config import Config as dcfg
 from piracer.parts.camera_stream import CameraStream
 from piracer.parts.actuator import PWMThrottle
+
+
 
 logger = logging.getLogger(__name__)
 
 logging.basicConfig(level=logging.INFO)
 
 
-def add_pwm_throttle(v: VehicleSingleUpdate):
-    throttle = PWMThrottle(
-        controller=None,
-        max_pulse=cfg.THROTTLE_FORWARD_PWM,
-        zero_pulse=cfg.THROTTLE_STOPPED_PWM,
-        min_pulse=cfg.THROTTLE_REVERSE_PWM,
-    )
-    v.add(throttle, outputs=['throttle'], threaded=True)
-
 def create_vehicle() -> VehicleSingleUpdate:
     vehicle = VehicleSingleUpdate()
-    #add_controller(vehicle, logging=False)
-    add_server_controller(vehicle, logging=False)
-    #add_pwm_throttle(vehicle)
-    add_steering_trottle(vehicle)
+    #add_controller(vehicle, logging=False)       # RC Remote Control Receiver
+    add_server_controller(vehicle, logging=False) # Server Remote Control Receiver
+    add_steering_trottle(vehicle)                 # Steering and Throttle Control
     return vehicle
 
+
+def monitor_config_changes(vehicle, config):
+    '''
+    If the config changes, we need to restart the vehicle
+    '''
+    if config != dcfg.get("car_parameters"):
+                    config = dcfg.get("car_parameters")
+                    vehicle.stop()
+                    del vehicle
+                    vehicle = create_vehicle()
+                    vehicle._warmup(rate_hz=cfg.RATE_HZ)
 
 def main():
     
@@ -44,21 +48,26 @@ def main():
         logger.addHandler(ch)
 
     if cfg.CAMERA_ENABLE:
-        stream = CameraStream(cfg.CAMERA_HOST, cfg.CAMERA_PORT, frame_delta_time=0.01)
-        stream.start()
+        camera_stream = CameraStream(cfg.CAMERA_HOST, cfg.CAMERA_PORT, frame_delta_time=0.01)
+        camera_stream.start()
+
 
     while True:
         vehicle = create_vehicle()
 
         vehicle._warmup(rate_hz=cfg.RATE_HZ)
         loop_count = 0
+
+        config = dcfg.get("car_parameters")
         try:
             while True:
                 vehicle.single_update(
                     loop_count=loop_count,
                     rate_hz=cfg.RATE_HZ,
-                )   # , verbose=True)
+                    verbose=False)
                 loop_count += 1
+
+                monitor_config_changes(vehicle, config)
 
         except KeyboardInterrupt:
             pass
@@ -69,7 +78,8 @@ def main():
             logging.info('stopping vehicle')
             vehicle.stop()
             if cfg.CAMERA_ENABLE:
-                stream.stop()
+                camera_stream.stop()
+            
 
 if __name__ == '__main__':
     main()

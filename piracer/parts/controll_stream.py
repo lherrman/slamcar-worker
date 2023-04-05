@@ -2,6 +2,7 @@ import time
 import zmq
 import threading
 from piracer.config import Config as cfg
+import os, sys
 
 class ControllStream():
     def __init__(self, host, port, frequency=10):
@@ -26,6 +27,9 @@ class ControllStream():
         }
         self.state_lock = threading.Lock()
         self.commands_lock = threading.Lock()
+
+        self.request_reboot = False
+
 
     def __del__(self):
         self.stop()
@@ -54,6 +58,8 @@ class ControllStream():
                 if response["config"]:
                     for key, value in response["config"].items():
                         cfg.set(key, value)
+                    self.request_reboot = True
+                    self.stop()
 
                 return True
             except:
