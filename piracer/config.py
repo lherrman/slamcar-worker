@@ -44,10 +44,10 @@ PWM_THROTTLE_INVERTED = False   # True if hardware requires an inverted PWM puls
 
 # for Camera Stream
 CAMERA_ENABLE = True
-CAMERA_RESOLUTION = (1640, 1232)
+CAMERA_RESOLUTION = (864, 648)
 CAMERA_FRAMERATE = 20
 CAMERA_PORT = 5001
-CAMERA_HOST = '10.0.0.21'
+CAMERA_HOST = '10.0.0.33'
 
 
 # for AI UNUSED
