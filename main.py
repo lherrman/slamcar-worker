@@ -14,7 +14,6 @@ from piracer.parts.camera_stream import CameraStream
 from piracer.parts.actuator import PWMThrottle
 
 
-
 logger = logging.getLogger(__name__)
 
 logging.basicConfig(level=logging.INFO)
@@ -23,7 +22,7 @@ logging.basicConfig(level=logging.INFO)
 def create_vehicle() -> VehicleSingleUpdate:
     vehicle = VehicleSingleUpdate()
     #add_controller(vehicle, logging=False)       # RC Remote Control Receiver
-    add_server_controller(vehicle, logging=False) # Server Remote Control Receiver
+    add_server_controller(vehicle, logging=dcfg.get("console_logging")) # Server Remote Control Receiver
     add_steering_trottle(vehicle)                 # Steering and Throttle Control
     return vehicle
 
@@ -41,16 +40,18 @@ def monitor_config_changes(vehicle, config):
 
 def main():
     
-    if cfg.HAVE_CONSOLE_LOGGING:
+    if dcfg.get("console_logging"):
         logger.setLevel(logging.getLevelName(cfg.LOGGING_LEVEL))
         ch = logging.StreamHandler()
         ch.setFormatter(logging.Formatter(cfg.LOGGING_FORMAT))
         logger.addHandler(ch)
 
     if cfg.CAMERA_ENABLE:
-        camera_stream = CameraStream(cfg.CAMERA_HOST, cfg.CAMERA_PORT, frame_delta_time=0.01)
+        camera_stream = CameraStream(cfg.CAMERA_HOST, 
+                                     cfg.CAMERA_PORT, 
+                                     frame_delta_time=0.01, 
+                                     size=cfg.CAMERA_RESOLUTION)
         camera_stream.start()
-
 
     while True:
         vehicle = create_vehicle()
