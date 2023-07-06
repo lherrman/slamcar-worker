@@ -13,7 +13,6 @@ from piracer.config import Config as dcfg
 from piracer.parts.camera_stream import CameraStream
 from piracer.parts.actuator import PWMThrottle
 
-
 logger = logging.getLogger(__name__)
 
 logging.basicConfig(level=logging.INFO)
@@ -26,20 +25,18 @@ def create_vehicle() -> VehicleSingleUpdate:
     add_steering_trottle(vehicle)                 # Steering and Throttle Control
     return vehicle
 
-
 def monitor_config_changes(vehicle, config):
     '''
     If the config changes, we need to restart the vehicle
     '''
     if config != dcfg.get("car_parameters"):
-                    config = dcfg.get("car_parameters")
-                    vehicle.stop()
-                    del vehicle
-                    vehicle = create_vehicle()
-                    vehicle._warmup(rate_hz=cfg.RATE_HZ)
+        config = dcfg.get("car_parameters")
+        vehicle.stop()
+        del vehicle
+        vehicle = create_vehicle()
+        vehicle._warmup(rate_hz=cfg.RATE_HZ)
 
 def main():
-    
     if dcfg.get("console_logging"):
         logger.setLevel(logging.getLevelName(cfg.LOGGING_LEVEL))
         ch = logging.StreamHandler()
@@ -68,7 +65,7 @@ def main():
                     verbose=False)
                 loop_count += 1
 
-                monitor_config_changes(vehicle, config)
+                #monitor_config_changes(vehicle, config)
 
         except KeyboardInterrupt:
             pass
