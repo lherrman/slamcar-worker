@@ -1,8 +1,11 @@
+import os, sys
 import time
 import zmq
 import threading
-from piracer.config import Config as cfg
-import os, sys
+try:
+    from piracer.config import Config as cfg
+except ImportError:
+    print("Error importing piracer.config")
 
 class ControllStream():
     def __init__(self, host, port, frequency=10):
@@ -29,7 +32,7 @@ class ControllStream():
         self.commands_lock = threading.Lock()
 
         self.request_reboot = False
-
+        self.debug = True
 
     def __del__(self):
         self.stop()
@@ -55,15 +58,19 @@ class ControllStream():
                 with self.commands_lock:
                     self.commands = response["controlls"]
 
-                if response["config"]:
-                    for key, value in response["config"].items():
-                        cfg.set(key, value)
-                    self.request_reboot = True
-                    self.stop()
-
+                # if response["config"]:
+                #     for key, value in response["config"].items():
+                #         cfg.set(key, value)
+                #     self.request_reboot = True
+                #     self.stop()
+                
                 return True
+                
             except:
+                if self.debug:
+                    print("Error communicating with the server")
                 return False
+
 
     def get_commands(self):
         with self.commands_lock:
@@ -76,7 +83,7 @@ class ControllStream():
 
 
 if __name__ == '__main__':
-    controll_stream = ControllStream('10.0.0.21', 5002, frequency=10)
+    controll_stream = ControllStream('192.168.59.126', 5002, frequency=10)
     controll_stream.start()
 
     try:
